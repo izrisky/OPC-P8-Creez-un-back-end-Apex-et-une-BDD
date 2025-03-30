@@ -48,9 +48,8 @@ private class AccountServiceTest {
     @isTest static void testDelete() {
         Account acc = new Account(Name = 'Test Account');
         insert acc;
-        AccountService.deleteAccount(acc.Id);
-
-        Account deletedAcc = [SELECT Id FROM Account WHERE Id = :acc.Id];
-        System.assertEquals(null, deletedAcc);
+        AccountService.deleteAccount(acc.Id);        
+        List<Account> deletedAccList = [SELECT Id FROM Account WHERE Id = :acc.Id];
+        System.assertEquals(0, deletedAccList.size(), 'Account should be deleted');
     }
 }

@@ -28,33 +28,23 @@ private class TripSelectorTest {
         insert acc;
 
         // Créer des voyages de test
-        Trip__c trip1 = new Trip__c(Name = 'Trip 1', Status__c = 'A venir', Account__c = acc.Id);
-        Trip__c trip2 = new Trip__c(Name = 'Trip 2', Status__c = 'A venir', Account__c = acc.Id);
+        Trip__c trip1 = new Trip__c(Status__c = 'A venir', Account__c = acc.Id);
+        Trip__c trip2 = new Trip__c(Status__c = 'A venir', Account__c = acc.Id);
         insert new List<Trip__c>{trip1, trip2};
     }
-
+    
     @isTest static void testGetById() {
         // Récupérer un voyage de test existant
-        Trip__c trip = [SELECT Id, Name FROM Trip__c WHERE Name = 'Trip 1' LIMIT 1];
+        Trip__c trip  = [SELECT Id, Name FROM Trip__c  LIMIT 1];
         Trip__c result = TripSelector.getById(trip.Id);
         System.assertNotEquals(null, result, 'Le voyage doit exister');
-        System.assertEquals('Trip 1', result.Name, 'Le nom doit être "Trip 1"');
+        System.assertEquals(trip.Name, result.Name, 'Le nom doit être :'+trip.Name);
     }
 
     @isTest static void testGetAll() {
         // Récupérer tous les voyages de test
         List<Trip__c> trips = TripSelector.getAll();
         System.assertNotEquals(0, trips.size(), 'La liste des voyages ne doit pas être vide');
-        
-        Boolean foundTrip1 = false;
-        Boolean foundTrip2 = false;
-
-        for (Trip__c trip : trips) {
-            if (trip.Name == 'Trip 1') foundTrip1 = true;
-            if (trip.Name == 'Trip 2') foundTrip2 = true;
-        }
-
-        System.assert(foundTrip1, 'Trip 1 devrait être dans la liste');
-        System.assert(foundTrip2, 'Trip 2 devrait être dans la liste');
+        System.assertEquals(2, trips.size(), 'La liste des voyages doit contenir 2 entrées');
     }
 }

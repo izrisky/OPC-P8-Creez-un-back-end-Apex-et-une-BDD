@@ -28,27 +28,27 @@ private class TripServiceTest {
         insert acc;
 
         // Créer un voyage de test
-        Trip__c trip = new Trip__c(Name = 'Trip Test', Status__c = 'A venir', Account__c = acc.Id);
+        Trip__c trip = new Trip__c( Status__c = 'A venir', Account__c = acc.Id);
         insert trip;
     }
 
     @isTest static void testCreate() {
         // Utiliser un compte existant pour créer un nouveau voyage
-        Trip__c trip = new Trip__c(Name = 'New Trip', Status__c = 'A venir', Account__c = [SELECT Id FROM Account LIMIT 1].Id);
+        Trip__c trip = new Trip__c(Status__c = 'A venir', Account__c = [SELECT Id FROM Account LIMIT 1].Id);
         Trip__c result = TripService.create(trip);
         System.assertNotEquals(null, result.Id, 'Le voyage doit être créé');
     }
 
     @isTest static void testGetById() {
         // Récupérer un voyage de test existant
-        Trip__c trip = [SELECT Id, Name FROM Trip__c WHERE Name = 'Trip Test' LIMIT 1];
+        Trip__c trip = [SELECT Id, Name FROM Trip__c LIMIT 1];
         Trip__c result = TripService.getById(trip.Id);
-        System.assertEquals('Trip Test', result.Name, 'Le nom du voyage doit être "Trip Test"');
+        System.assertEquals(trip.Name, result.Name, 'Le nom du voyage doit être "Trip Test"');
     }
 
     @isTest static void testUpdate() {
         // Utiliser un voyage de test existant et le mettre à jour
-        Trip__c trip = [SELECT Id, Status__c FROM Trip__c WHERE Name = 'Trip Test' LIMIT 1];
+        Trip__c trip = [SELECT Id, Status__c FROM Trip__c LIMIT 1];
         trip.Status__c = 'En cours';
         TripService.updateTrip(trip);
 
@@ -58,7 +58,7 @@ private class TripServiceTest {
 
     @isTest static void testDelete() {
         // Utiliser un voyage de test existant et le supprimer
-        Trip__c trip = [SELECT Id FROM Trip__c WHERE Name = 'Trip Test' LIMIT 1];
+        Trip__c trip = [SELECT Id FROM Trip__c  LIMIT 1];
         TripService.deleteTrip(trip.Id);
 
         List<Trip__c> deletedTrip = [SELECT Id FROM Trip__c WHERE Id = :trip.Id];
