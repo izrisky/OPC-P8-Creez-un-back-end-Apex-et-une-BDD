@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Package xmlns="http://soap.sforce.com/2006/04/metadata">
+    <types>
+        <members>AccountSelector</members>
+        <members>AccountSelectorTest</members>
+        <members>AccountService</members>
+        <members>AccountServiceTest</members>
+        <members>ContractSelector</members>
+        <members>ContractSelectorTest</members>
+        <members>ContractService</members>
+        <members>ContractServiceTest</members>
+        <members>DataFactory</members>
+        <members>OpportunitySelector</members>
+        <members>OpportunitySelectorTest</members>
+        <members>OpportunityService</members>
+        <members>OpportunityServiceTest</members>
+        <members>TripSelector</members>
+        <members>TripSelectorTest</members>
+        <members>TripService</members>
+        <members>TripServiceTest</members>
+        <name>ApexClass</name>
+    </types>
+    <types>
+        <members>Admin</members>
+        <name>Profile</name>
+    </types>
+    <types>
+        <members>Senior Sales Profile</members>
+        <name>Profile</name>
+    </types>
+    <types>
+        <members>Junior Sales Profile</members>
+        <name>Profile</name>
+    </types>
+    <types>
+        <members>*</members>
+        <name>CustomObject</name>
+    </types>
+    <version>63.0</version>
+</Package>

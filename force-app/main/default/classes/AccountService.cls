@@ -1,7 +1,4 @@
 public with sharing class AccountService {
-    public AccountService() {
-
-    }
     public static Account create(Account acc) {
         Database.insert(acc);
         return acc;

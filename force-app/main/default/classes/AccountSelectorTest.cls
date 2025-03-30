@@ -22,28 +22,23 @@
 @isTest
 private class AccountSelectorTest {
     @isTest static void testGetById() {
-        // Créer un enregistrement test
         Account acc = new Account(Name = 'Test Account');
         insert acc;
 
-        // Appeler la méthode de requête
         Account result = AccountSelector.getById(acc.Id);
 
-        // Vérifier le résultat
+      
         System.assertNotEquals(null, result);
         System.assertEquals('Test Account', result.Name);
     }
 
     @isTest static void testGetAll() {
-        // Créer un enregistrement test
         Account acc1 = new Account(Name = 'Account 1');
         Account acc2 = new Account(Name = 'Account 2');
         insert new List<Account>{acc1, acc2};
 
-        // Appeler la méthode de requête
         List<Account> accounts = AccountSelector.getAll();
 
-        // Vérifier le résultat
         System.assertNotEquals(0, accounts.size());
         Boolean foundAcc1 = false;
         Boolean foundAcc2 = false;

@@ -23,32 +23,27 @@
 private class OpportunityServiceTest {
 
     @testSetup static void setUp() {
-        // Créer un enregistrement test pour Account
         Account acc = new Account(Name = 'Test Account');
         insert acc;
 
-        // Créer des opportunités de test
         Opportunity opp1 = new Opportunity(Name = 'Opportunity 1', StageName = 'Prospecting', CloseDate = Date.today(), AccountId = acc.Id);
         Opportunity opp2 = new Opportunity(Name = 'Opportunity 2', StageName = 'Prospecting', CloseDate = Date.today(), AccountId = acc.Id);
         insert new List<Opportunity>{opp1, opp2};
     }
 
     @isTest static void testCreate() {
-        // Utiliser un compte existant pour créer une nouvelle opportunité
         Opportunity opp = new Opportunity(Name = 'Test Opportunity', StageName = 'Prospecting', CloseDate = Date.today(), AccountId = [SELECT Id FROM Account LIMIT 1].Id);
         Opportunity result = OpportunityService.create(opp);
         System.assertNotEquals(null, result.Id, 'L\'opportunité doit être créée');
     }
 
     @isTest static void testGetById() {
-        // Utiliser une opportunité existante
         Opportunity opp = [SELECT Id, Name FROM Opportunity WHERE Name = 'Opportunity 1' LIMIT 1];
         Opportunity result = OpportunityService.getById(opp.Id);
         System.assertEquals('Opportunity 1', result.Name, 'Le nom de l\'opportunité doit être "Opportunity 1"');
     }
 
     @isTest static void testUpdate() {
-        // Utiliser une opportunité existante et la mettre à jour
         Opportunity opp = [SELECT Id, Name FROM Opportunity LIMIT 1];
         opp.Name = 'Updated Opportunity';
         OpportunityService.updateOpportunity(opp);
@@ -58,7 +53,6 @@ private class OpportunityServiceTest {
     }
 
     @isTest static void testDelete() {
-        // Utiliser une opportunité existante et la supprimer
         Opportunity opp = [SELECT Id FROM Opportunity LIMIT 1];
         OpportunityService.deleteOpportunity(opp.Id);
 

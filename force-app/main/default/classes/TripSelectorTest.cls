@@ -21,30 +21,79 @@
  */
 @isTest
 private class TripSelectorTest {
-
-    @testSetup static void setUp() {
-        // Créer un enregistrement test pour Account
+   @testSetup
+    static void setUp() {
         Account acc = new Account(Name = 'Test Account');
         insert acc;
-
-        // Créer des voyages de test
         Trip__c trip1 = new Trip__c(Status__c = 'A venir', Account__c = acc.Id);
         Trip__c trip2 = new Trip__c(Status__c = 'A venir', Account__c = acc.Id);
         insert new List<Trip__c>{trip1, trip2};
     }
     
-    @isTest static void testGetById() {
-        // Récupérer un voyage de test existant
+    @isTest
+    static void testGetById() {
         Trip__c trip  = [SELECT Id, Name FROM Trip__c  LIMIT 1];
+        Test.startTest();
         Trip__c result = TripSelector.getById(trip.Id);
+        Test.stopTest();
         System.assertNotEquals(null, result, 'Le voyage doit exister');
         System.assertEquals(trip.Name, result.Name, 'Le nom doit être :'+trip.Name);
     }
+    @isTest
+    static void testGetById_WithAccess() {       
+         User testUser = createUserWithoutTripAccess();
+        if (testUser == null) return;
+        Trip__c trip  = [SELECT Id, Name FROM Trip__c  LIMIT 1];
 
-    @isTest static void testGetAll() {
-        // Récupérer tous les voyages de test
+        Test.startTest();
+        System.runAs(testUser) {
+            Trip__c result = TripSelector.getById(trip.Id);
+            System.assertNotEquals(null, result, 'Le voyage doit exister');
+            System.assertEquals(trip.Name, result.Name, 'Le nom doit être :'+trip.Name);
+        }
+        Test.stopTest();
+    }
+    @isTest 
+    static void testGetAll() {
+        Test.startTest();
         List<Trip__c> trips = TripSelector.getAll();
+        Test.stopTest();
         System.assertNotEquals(0, trips.size(), 'La liste des voyages ne doit pas être vide');
         System.assertEquals(2, trips.size(), 'La liste des voyages doit contenir 2 entrées');
+    }
+    @isTest
+    static void testGetAll_WithAccess() {       
+         User testUser = createUserWithoutTripAccess();
+        if (testUser == null) return;
+        Trip__c trip  = [SELECT Id, Name FROM Trip__c  LIMIT 1];
+
+        Test.startTest();
+        System.runAs(testUser) {
+            List<Trip__c> trips = TripSelector.getAll();
+            System.assertNotEquals(0, trips.size(), 'La liste des voyages ne doit pas être vide');
+            System.assertEquals(2, trips.size(), 'La liste des voyages doit contenir 2 entrées');
+        }
+        Test.stopTest();
+    }
+    // Méthode utilitaire pour créer un utilisateur sans droits sur Trip__c
+    private static User createUserWithoutTripAccess() {
+        Profile p;
+        try {
+            p = [SELECT Id FROM Profile WHERE Name = 'Minimum Access - Salesforce' LIMIT 1];
+            } catch (Exception e) {
+            return null; 
+        }
+                
+            return new User(
+                Alias = 'notrip',
+                Email = 'notrip@test.com',
+                EmailEncodingKey = 'UTF-8',
+                LastName = 'NoTripAccess',
+                ProfileId = p.Id,
+                TimeZoneSidKey = 'Europe/Paris',
+                UserName = 'notrip@test.com.' + Math.random(),
+                LanguageLocaleKey = 'en_US',
+                LocaleSidKey = 'en_US'
+            );
     }
 }
