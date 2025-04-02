@@ -21,15 +21,51 @@
  */
 @isTest
 private class TripServiceTest {
+    private static User createUserWithTripReadOnlyAccess() {
+        Profile p;
+        try {
+            p = [SELECT Id FROM Profile WHERE Name = 'Junior Sales Profile' LIMIT 1];
+        } catch (Exception e) {
+            return null; 
+        }
+        
+        return new User(
+            Alias = 'notrip',
+            Email = 'notrip@test.com',
+            EmailEncodingKey = 'UTF-8',
+            LastName = 'NoTripAccess',
+            ProfileId = p.Id,
+            TimeZoneSidKey = 'Europe/Paris',
+            UserName = 'notrip@test.com.' + Math.random(),
+            LanguageLocaleKey = 'en_US',
+            LocaleSidKey = 'en_US'
+        );
+    }
+    @testSetup 
+    static void setUp() {     
 
-    @testSetup static void setUp() {
-        Account acc = new Account(Name = 'Test Account');
-        insert acc;
-        Trip__c trip = new Trip__c( Status__c = 'A venir', Account__c = acc.Id);
+        Account account = new Account(Name = 'Test Account');
+        insert account;
+
+        Opportunity opp = new Opportunity(
+            Name = 'Test Opportunity',
+            StageName = 'Prospecting',
+            CloseDate = Date.today(),
+            AccountId = account.Id,
+            Amount = 1000,
+            Destination__c = 'Paris',
+            Start_Date__c = Date.today().addDays(10),
+            End_Date__c = Date.today().addDays(15),
+            Number_of_Participants__c = 20
+        );
+        insert opp;
+
+         Trip__c trip = new Trip__c( Status__c = 'A venir', Account__c = account.Id);
         insert trip;
     }
 
-    @isTest static void testCreate() {
+    @isTest 
+    static void testCreate() {
         Trip__c trip = new Trip__c(Status__c = 'A venir', Account__c = [SELECT Id FROM Account LIMIT 1].Id);
         Test.startTest();
         Trip__c result = TripService.create(trip);        
@@ -53,7 +89,8 @@ private class TripServiceTest {
         }
         Test.stopTest();
     }
-    @isTest static void testGetById() {
+    @isTest 
+    static void testGetById() {
         Trip__c trip = [SELECT Id, Name FROM Trip__c LIMIT 1];
         Test.startTest();
         Trip__c result = TripService.getById(trip.Id);
@@ -61,7 +98,8 @@ private class TripServiceTest {
         System.assertEquals(trip.Name, result.Name, 'Le nom du voyage doit être "Trip Test"');
     }
 
-    @isTest static void testUpdate() {
+    @isTest
+     static void testUpdate() {
         Trip__c trip = [SELECT Id, Status__c FROM Trip__c LIMIT 1];
         trip.Status__c = 'En cours';
         Test.startTest();
@@ -73,7 +111,8 @@ private class TripServiceTest {
         System.assertEquals('En cours', updatedTrip.Status__c, 'Le statut du voyage doit être mis à jour');
     }
 
-    @isTest static void testDelete() {
+    @isTest 
+    static void testDelete() {
         Trip__c trip = [SELECT Id FROM Trip__c  LIMIT 1];
         Test.startTest();
         TripService.deleteTrip(trip.Id);
@@ -84,24 +123,55 @@ private class TripServiceTest {
         System.assertEquals(0, deletedTrip.size(), 'Le voyage doit être supprimé');
     }
 
-        private static User createUserWithTripReadOnlyAccess() {
-            Profile p;
-            try {
-                p = [SELECT Id FROM Profile WHERE Name = 'Junior Sales Profile' LIMIT 1];
-            } catch (Exception e) {
-                return null; 
-            }
-            
-            return new User(
-                Alias = 'notrip',
-                Email = 'notrip@test.com',
-                EmailEncodingKey = 'UTF-8',
-                LastName = 'NoTripAccess',
-                ProfileId = p.Id,
-                TimeZoneSidKey = 'Europe/Paris',
-                UserName = 'notrip@test.com.' + Math.random(),
-                LanguageLocaleKey = 'en_US',
-                LocaleSidKey = 'en_US'
-            );
+        @isTest
+        static void testCreateTripForClosedWonOpportunities() {
+            Opportunity  opp=[SELECT Id, Name, Amount FROM Opportunity LIMIT 1];
+            opp.StageName = 'Closed Won';
+    
+            Test.startTest();
+            update opp;
+            Test.stopTest();
+    
+            List<Trip__c> trips = [SELECT Id, Status__c, Destination__c FROM Trip__c WHERE Opportunity__c = :opp.Id];
+            System.assertEquals(1, trips.size());
+            System.assertEquals('A venir', trips[0].Status__c);
+            System.assertEquals('Paris', trips[0].Destination__c);
         }
+    
+    @isTest
+    static void testTripDateValidation() {
+        Opportunity opportunity = [SELECT Id FROM Opportunity LIMIT 1];
+        Account account = [SELECT Id FROM Account LIMIT 1];
+
+        // Créer un voyage avec des dates valides
+        Trip__c validTrip = new Trip__c(
+            Status__c = 'A venir',
+            Destination__c = 'Paris',
+            Start_Date__c = Date.today().addDays(10),
+            End_Date__c = Date.today().addDays(15),
+            Account__c = account.Id,
+            Opportunity__c = opportunity.Id
+        );
+
+        Test.startTest();
+        insert validTrip; 
+
+        Trip__c invalidTrip = new Trip__c(
+            Status__c = 'A venir',
+            Destination__c = 'Paris',
+            Start_Date__c = Date.today().addDays(15),
+            End_Date__c = Date.today().addDays(10),
+            Account__c = account.Id,
+            Opportunity__c = opportunity.Id
+        );
+
+        try {
+            insert invalidTrip; // Devrait échouer
+            System.assert(false, 'La validation des dates a échoué.');
+        } catch (DmlException e) {
+            System.assert(e.getMessage().contains('La date de fin doit être postérieure à la date de début.'));
+        }
+        Test.stopTest();
+    }
+    
 }
