@@ -59,4 +59,16 @@ private class OpportunityServiceTest {
         List<Opportunity> deletedOpp = [SELECT Id FROM Opportunity WHERE Id = :opp.Id];
         System.assertEquals(0, deletedOpp.size(), 'L\'opportunité doit être supprimée');
     }
+
+    @isTest
+    static void testDeleteAllOpportunities() {
+        Integer initialCount = [SELECT COUNT() FROM Opportunity];
+        System.assertEquals(2, initialCount, 'Il devrait y avoir 2 opportunités.');
+
+        Test.startTest();
+        OpportunityService.deleteAllOpportunities();
+        Test.stopTest();
+        Integer finalCount = [SELECT COUNT() FROM Opportunity];
+        System.assertEquals(0, finalCount, 'Toutes les opportunités devraient être supprimées.');
+    }
 }

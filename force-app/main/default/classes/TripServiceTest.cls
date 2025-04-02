@@ -143,7 +143,6 @@ private class TripServiceTest {
         Opportunity opportunity = [SELECT Id FROM Opportunity LIMIT 1];
         Account account = [SELECT Id FROM Account LIMIT 1];
 
-        // Créer un voyage avec des dates valides
         Trip__c validTrip = new Trip__c(
             Status__c = 'A venir',
             Destination__c = 'Paris',
@@ -166,12 +165,42 @@ private class TripServiceTest {
         );
 
         try {
-            insert invalidTrip; // Devrait échouer
+            insert invalidTrip; 
             System.assert(false, 'La validation des dates a échoué.');
         } catch (DmlException e) {
             System.assert(e.getMessage().contains('La date de fin doit être postérieure à la date de début.'));
         }
         Test.stopTest();
     }
-    
+    @isTest
+    static void testDeleteAllTrips() {
+        Account account = new Account(Name = 'Test Account');
+        insert account;
+        
+        Trip__c trip1 = new Trip__c(
+            Status__c = 'A venir',
+            Start_Date__c = Date.today().addDays(10),
+            End_Date__c = Date.today().addDays(15),
+            Account__c = account.Id
+        );
+        
+        Trip__c trip2 = new Trip__c(
+            Status__c = 'En cours',
+            Start_Date__c = Date.today().addDays(-5),
+            End_Date__c = Date.today().addDays(5),
+            Account__c = account.Id
+        );
+        
+        insert new List<Trip__c>{trip1, trip2};
+
+        Integer initialCount = [SELECT COUNT() FROM Trip__c];
+        System.assertEquals(3, initialCount, 'Il devrait y avoir 2 voyages.');//un trip est ajouté dans setup
+
+        Test.startTest();
+        TripService.deleteAllTrips();
+        Test.stopTest();
+
+        Integer finalCount = [SELECT COUNT() FROM Trip__c];
+        System.assertEquals(0, finalCount, 'Tous les voyages devraient être supprimés.');
+    }
 }

@@ -40,7 +40,7 @@ private class TripSelectorTest {
         System.assertEquals(trip.Name, result.Name, 'Le nom doit être :'+trip.Name);
     }
     @isTest
-    static void testGetById_WithAccess() {       
+    static void testGetById_WithoutAccess() {       
          User testUser = createUserWithoutTripAccess();
         if (testUser == null) return;
         Trip__c trip  = [SELECT Id, Name FROM Trip__c  LIMIT 1];
@@ -48,8 +48,7 @@ private class TripSelectorTest {
         Test.startTest();
         System.runAs(testUser) {
             Trip__c result = TripSelector.getById(trip.Id);
-            System.assertNotEquals(null, result, 'Le voyage doit exister');
-            System.assertEquals(trip.Name, result.Name, 'Le nom doit être :'+trip.Name);
+            System.assertEquals(null, result, 'Le voyage doit être null');
         }
         Test.stopTest();
     }
@@ -62,7 +61,7 @@ private class TripSelectorTest {
         System.assertEquals(2, trips.size(), 'La liste des voyages doit contenir 2 entrées');
     }
     @isTest
-    static void testGetAll_WithAccess() {       
+    static void testGetAll_WithoutAccess() {       
          User testUser = createUserWithoutTripAccess();
         if (testUser == null) return;
         Trip__c trip  = [SELECT Id, Name FROM Trip__c  LIMIT 1];
@@ -70,8 +69,7 @@ private class TripSelectorTest {
         Test.startTest();
         System.runAs(testUser) {
             List<Trip__c> trips = TripSelector.getAll();
-            System.assertNotEquals(0, trips.size(), 'La liste des voyages ne doit pas être vide');
-            System.assertEquals(2, trips.size(), 'La liste des voyages doit contenir 2 entrées');
+            System.assertEquals(0, trips.size(), 'La liste des voyages doit être vide');
         }
         Test.stopTest();
     }
