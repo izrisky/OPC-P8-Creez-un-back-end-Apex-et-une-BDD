@@ -58,4 +58,18 @@ public with sharing class TripService {
             insert tripsToCreate;
         }
     }
+    public static void deleteAllTrips() {
+        List<Trip__c> trips = [SELECT Id FROM Trip__c];
+        
+        if (!trips.isEmpty()) {
+            try {
+                delete trips;
+                System.debug('Toutes les trips ont été supprimées.');
+            } catch (DmlException e) {
+                System.debug('Erreur lors de la suppression des trips : ' + e.getMessage());
+            }
+        } else {
+            System.debug('Aucune trip à supprimer.');
+        }
+    }
 }

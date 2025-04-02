@@ -51,4 +51,29 @@ public class DataFactory {
         }
         insert trips;
     }
+
+    public static void populateRealisticDataForTestBatch() {
+        List<Opportunity> opportunities = OpportunitySelector.getAll();
+        List<Trip__c> trips = new List<Trip__c>();
+
+        // Créer des voyages réalistes
+        List<String> destinations = new List<String>{'Marrakech','Paris', 'New York', 'Tokyo'};
+
+        for (Opportunity opp : opportunities) {
+            Integer randomIndex = (Integer)Math.floor(Math.random() * destinations.size());
+            Integer numberParticipant=(Integer)Math.floor(Math.random() * 100) + 5;
+            Trip__c trip = new Trip__c(
+                Status__c = 'A venir',
+                Destination__c = destinations[randomIndex],
+                Start_Date__c = Date.today().addDays(7),
+                End_Date__c = Date.today().addDays(17),
+                Number_of_Participants__c =Math.Mod((Integer)Math.floor(Math.random() * 100) + 5,9),
+                Total_Cost__c = 1000 + Math.random() * 200,
+                Account__c = opp.AccountId,
+                Opportunity__c = opp.Id
+            );
+            trips.add(trip);
+        }
+        insert trips;
+    }
 }

@@ -4,6 +4,6 @@ public with sharing class OpportunitySelector {
     }
 
     public static List<Opportunity> getAll() {
-        return [SELECT Id, Name, Amount FROM Opportunity];
+        return [SELECT Id, Name, Amount, AccountId FROM Opportunity];
     }
 }

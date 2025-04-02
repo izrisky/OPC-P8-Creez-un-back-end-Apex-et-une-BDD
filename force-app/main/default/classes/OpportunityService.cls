@@ -20,4 +20,18 @@ public with sharing class OpportunityService {
             delete opp;
         }
     }
+    public static void deleteAllOpportunities() {
+        List<Opportunity> opportunities = [SELECT Id FROM Opportunity];
+        
+        if (!opportunities.isEmpty()) {
+            try {
+                delete opportunities;
+                System.debug('Toutes les opportunités ont été supprimées.');
+            } catch (DmlException e) {
+                System.debug('Erreur lors de la suppression des opportunités : ' + e.getMessage());
+            }
+        } else {
+            System.debug('Aucune opportunité à supprimer.');
+        }
+    }
 }
