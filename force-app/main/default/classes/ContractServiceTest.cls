@@ -32,7 +32,9 @@ private class ContractServiceTest {
 
     @isTest static void testCreate() {
         Contract con = new Contract(AccountId = [SELECT Id FROM Account LIMIT 1].Id, Status = 'Draft');
+        Test.startTest(); 
         Contract result = ContractService.create(con);
+        Test.stopTest();   
         System.assertNotEquals(null, result.Id, 'Le contrat doit être créé');
     }
 
@@ -45,7 +47,9 @@ private class ContractServiceTest {
     @isTest static void testUpdate() {
         Contract con = [SELECT Id FROM Contract LIMIT 1];
         con.Status = 'Activated';
+        Test.startTest(); 
         ContractService.updateContract(con);
+        Test.stopTest();   
 
         Contract updatedCon = [SELECT Status FROM Contract WHERE Id = :con.Id];
         System.assertEquals('Activated', updatedCon.Status, 'Le statut doit être mis à jour');
@@ -53,7 +57,9 @@ private class ContractServiceTest {
 
     @isTest static void testDelete() {
         Contract con = [SELECT Id FROM Contract LIMIT 1];
+        Test.startTest(); 
         ContractService.deleteContract(con.Id);
+        Test.stopTest();   
 
         List<Contract> deletedCon = [SELECT Id FROM Contract WHERE Id = :con.Id];
         System.assertEquals(0, deletedCon.size(), 'Le contrat doit être supprimé');

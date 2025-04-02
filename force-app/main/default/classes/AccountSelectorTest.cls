@@ -25,8 +25,10 @@ private class AccountSelectorTest {
         Account acc = new Account(Name = 'Test Account');
         insert acc;
 
-        Account result = AccountSelector.getById(acc.Id);
 
+        Test.startTest();
+        Account result = AccountSelector.getById(acc.Id);
+        Test.stopTest();
       
         System.assertNotEquals(null, result);
         System.assertEquals('Test Account', result.Name);
@@ -37,7 +39,9 @@ private class AccountSelectorTest {
         Account acc2 = new Account(Name = 'Account 2');
         insert new List<Account>{acc1, acc2};
 
+        Test.startTest();
         List<Account> accounts = AccountSelector.getAll();
+        Test.stopTest();
 
         System.assertNotEquals(0, accounts.size());
         Boolean foundAcc1 = false;

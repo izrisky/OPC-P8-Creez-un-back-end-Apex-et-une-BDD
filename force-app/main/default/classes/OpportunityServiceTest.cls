@@ -33,20 +33,27 @@ private class OpportunityServiceTest {
 
     @isTest static void testCreate() {
         Opportunity opp = new Opportunity(Name = 'Test Opportunity', StageName = 'Prospecting', CloseDate = Date.today(), AccountId = [SELECT Id FROM Account LIMIT 1].Id);
+        
+        Test.startTest(); 
         Opportunity result = OpportunityService.create(opp);
+        Test.stopTest();  
         System.assertNotEquals(null, result.Id, 'L\'opportunité doit être créée');
     }
 
     @isTest static void testGetById() {
         Opportunity opp = [SELECT Id, Name FROM Opportunity WHERE Name = 'Opportunity 1' LIMIT 1];
+        Test.startTest();
         Opportunity result = OpportunityService.getById(opp.Id);
+        Test.stopTest();  
         System.assertEquals('Opportunity 1', result.Name, 'Le nom de l\'opportunité doit être "Opportunity 1"');
     }
 
     @isTest static void testUpdate() {
         Opportunity opp = [SELECT Id, Name FROM Opportunity LIMIT 1];
         opp.Name = 'Updated Opportunity';
+        Test.startTest();
         OpportunityService.updateOpportunity(opp);
+        Test.stopTest();  
 
         Opportunity updatedOpp = [SELECT Name FROM Opportunity WHERE Id = :opp.Id];
         System.assertEquals('Updated Opportunity', updatedOpp.Name, 'Le nom de l\'opportunité doit être mis à jour');
@@ -54,7 +61,9 @@ private class OpportunityServiceTest {
 
     @isTest static void testDelete() {
         Opportunity opp = [SELECT Id FROM Opportunity LIMIT 1];
+        Test.startTest();
         OpportunityService.deleteOpportunity(opp.Id);
+        Test.stopTest();  
 
         List<Opportunity> deletedOpp = [SELECT Id FROM Opportunity WHERE Id = :opp.Id];
         System.assertEquals(0, deletedOpp.size(), 'L\'opportunité doit être supprimée');

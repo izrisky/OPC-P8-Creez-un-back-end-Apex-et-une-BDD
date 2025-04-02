@@ -29,7 +29,9 @@ private class ContractSelectorTest {
         Contract con = new Contract(AccountId = acc.Id, Status = 'Draft'); 
         insert con;
 
+        Test.startTest(); 
         Contract result = ContractSelector.getById(con.Id);
+        Test.stopTest();   
 
         System.assertNotEquals(null, result, 'Le contrat doit exister');
         System.assertEquals('Draft', result.Status, 'Le statut doit être "Draft"');
@@ -43,7 +45,9 @@ private class ContractSelectorTest {
         Contract con2 = new Contract(AccountId = acc.Id, Status = 'Draft');
         insert new List<Contract>{con1, con2};
 
+        Test.startTest(); 
         List<Contract> contracts = ContractSelector.getAll();
+        Test.stopTest();   
 
         System.assertNotEquals(0, contracts.size(), 'La liste des contrats ne doit pas être vide');
 

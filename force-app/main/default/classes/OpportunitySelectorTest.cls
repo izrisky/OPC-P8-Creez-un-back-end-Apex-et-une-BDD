@@ -33,13 +33,17 @@ private class OpportunitySelectorTest {
 
     @isTest static void testGetById() {
         Opportunity opp = [SELECT Id, Name FROM Opportunity WHERE Name = 'Opportunity 1' LIMIT 1];
+        Test.startTest(); 
         Opportunity result = OpportunitySelector.getById(opp.Id);
+        Test.stopTest();  
         System.assertNotEquals(null, result, 'L\'opportunité doit exister');
         System.assertEquals('Opportunity 1', result.Name, 'Le nom doit être "Opportunity 1"');
     }
 
-    @isTest static void testGetAll() {
+    @isTest static void testGetAll() {       
+        Test.startTest(); 
         List<Opportunity> opportunities = OpportunitySelector.getAll();
+        Test.stopTest();  
         System.assertNotEquals(0, opportunities.size(), 'La liste des opportunités ne doit pas être vide');
         
         Boolean foundOpp1 = false;

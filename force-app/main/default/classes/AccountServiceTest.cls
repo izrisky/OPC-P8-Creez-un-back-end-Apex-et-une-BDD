@@ -24,14 +24,19 @@ private class AccountServiceTest {
 
     @isTest static void testCreate() {
         Account acc = new Account(Name = 'Test Account');
+        
+        Test.startTest();
         Account result = AccountService.create(acc);
+        Test.stopTest();
         System.assertNotEquals(null, result.Id);
     }
 
     @isTest static void testGetById() {
         Account acc = new Account(Name = 'Test Account');
-        insert acc;
+        insert acc; 
+        Test.startTest();
         Account result = AccountService.getById(acc.Id);
+        Test.stopTest();
         System.assertEquals('Test Account', result.Name);
     }
 
@@ -39,7 +44,9 @@ private class AccountServiceTest {
         Account acc = new Account(Name = 'Test Account');
         insert acc;
         acc.Name = 'Updated Account';
+        Test.startTest();
         AccountService.updateAccount(acc);
+        Test.stopTest();
 
         Account updatedAcc = [SELECT Name FROM Account WHERE Id = :acc.Id];
         System.assertEquals('Updated Account', updatedAcc.Name);
@@ -48,7 +55,9 @@ private class AccountServiceTest {
     @isTest static void testDelete() {
         Account acc = new Account(Name = 'Test Account');
         insert acc;
-        AccountService.deleteAccount(acc.Id);        
+        Test.startTest();
+        AccountService.deleteAccount(acc.Id);
+        Test.stopTest();        
         List<Account> deletedAccList = [SELECT Id FROM Account WHERE Id = :acc.Id];
         System.assertEquals(0, deletedAccList.size(), 'Account should be deleted');
     }
