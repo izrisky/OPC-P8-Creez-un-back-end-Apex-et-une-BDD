@@ -24,7 +24,7 @@ public class DataFactoryTest {
 
     @testSetup
     static void setupTestData() {
-        DataFactory.populateRealisticData(); 
+        DataFactory.addData(); 
     }
 
     @isTest
@@ -59,7 +59,7 @@ public class DataFactoryTest {
         insert opportunities;
 
         Test.startTest();
-        DataFactory.populateRealisticDataForTestBatch();
+        DataFactory.addDataForTestBatch();
         Test.stopTest();
 
         Integer newTripCount = [SELECT COUNT() FROM Trip__c];

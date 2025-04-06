@@ -49,6 +49,9 @@ private class TripSelectorTest {
         System.runAs(testUser) {            
     try {
             Trip__c result = TripSelector.getById(trip.Id);
+
+
+            
             System.assertEquals(null, result, 'Le voyage doit être null');
         } catch (Exception e) {
             System.assert(e instanceof QueryException, 'Doit lever une QueryException en cas de champ inaccessibles');

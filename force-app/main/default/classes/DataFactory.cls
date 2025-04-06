@@ -1,5 +1,6 @@
 public class DataFactory {
-    public static void populateRealisticData() {
+
+    public static void addData() {
         List<Account> accounts = new List<Account>();
         List<Opportunity> opportunities = new List<Opportunity>();
         List<Trip__c> trips = new List<Trip__c>();
@@ -24,7 +25,9 @@ public class DataFactory {
             Opportunity opp = new Opportunity(
                 Name = 'Contract with ' + acc.Name,
                 StageName = 'Prospecting',
-                CloseDate = Date.today().addDays(60),
+                CloseDate = Date.today().addDays(60),                
+                Start_Date__c = Date.today().addDays(90),
+                End_Date__c = Date.today().addDays(97),
                 Amount = Math.random() * 100000,
                 AccountId = acc.Id
             );
@@ -40,8 +43,8 @@ public class DataFactory {
             Trip__c trip = new Trip__c(
                 Status__c = 'A venir',
                 Destination__c = destinations[randomIndex],
-                Start_Date__c = Date.today().addDays(90),
-                End_Date__c = Date.today().addDays(97),
+                Start_Date__c = opp.Start_Date__c,
+                End_Date__c = opp.End_Date__c,
                 Number_of_Participants__c = Math.floor(Math.random() * 100) + 5,
                 Total_Cost__c = 30000 + Math.random() * 20000,
                 Account__c = opp.AccountId,
@@ -52,7 +55,7 @@ public class DataFactory {
         insert trips;
     }
 
-    public static void populateRealisticDataForTestBatch() {
+    public static void addDataForTestBatch() {
         List<Opportunity> opportunities = OpportunitySelector.getAll();
         List<Trip__c> trips = new List<Trip__c>();
 
