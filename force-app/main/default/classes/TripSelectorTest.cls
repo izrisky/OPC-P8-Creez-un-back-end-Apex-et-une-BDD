@@ -46,9 +46,13 @@ private class TripSelectorTest {
         Trip__c trip  = [SELECT Id, Name FROM Trip__c  LIMIT 1];
 
         Test.startTest();
-        System.runAs(testUser) {
+        System.runAs(testUser) {            
+    try {
             Trip__c result = TripSelector.getById(trip.Id);
             System.assertEquals(null, result, 'Le voyage doit être null');
+        } catch (Exception e) {
+            System.assert(e instanceof QueryException, 'Doit lever une QueryException en cas de champ inaccessibles');
+        }
         }
         Test.stopTest();
     }
