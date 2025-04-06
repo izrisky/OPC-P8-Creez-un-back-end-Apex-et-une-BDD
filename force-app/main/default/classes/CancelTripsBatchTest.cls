@@ -48,4 +48,17 @@ public class CancelTripsBatchTest {
             }
         }
     }
+        // Test de la planification
+        @isTest
+        static void testSchedulable() {
+            String cronExp = '0 0 12 * * ?'; // Tous les jours à midi
+            
+            Test.startTest();
+            System.schedule('Test Cancel Trips Job', cronExp, new CancelTripsBatch());
+            Test.stopTest();
+            
+            // Vérification du job planifié
+            List<CronTrigger> jobs = [SELECT Id FROM CronTrigger WHERE CronJobDetail.Name LIKE 'Test Cancel Trips Job%'];
+            System.assertEquals(1, jobs.size(), 'Le job devrait être planifié');
+        }
 }

@@ -1,6 +1,7 @@
-global class UpdateTripStatusBatch implements Database.Batchable<sObject> {
+global class UpdateTripStatusBatch implements Database.Batchable<sObject>,Schedulable {
     
     global Database.QueryLocator start(Database.BatchableContext BC) {
+        ///TODO optimiser la requette
         return Database.getQueryLocator([
             SELECT Id, Start_Date__c, End_Date__c, Status__c 
             FROM Trip__c 
@@ -25,4 +26,8 @@ global class UpdateTripStatusBatch implements Database.Batchable<sObject> {
     
     global void finish(Database.BatchableContext BC) {
     }
+        global void execute(SchedulableContext sc) {
+            UpdateTripStatusBatch batch = new UpdateTripStatusBatch();
+            Database.executeBatch(batch);
+        }
 }

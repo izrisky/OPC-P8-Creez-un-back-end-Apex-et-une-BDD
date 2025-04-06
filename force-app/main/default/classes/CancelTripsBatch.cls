@@ -1,4 +1,4 @@
-global class CancelTripsBatch implements Database.Batchable<sObject> {
+global class CancelTripsBatch implements Database.Batchable<sObject> ,Schedulable{
     
     global Database.QueryLocator start(Database.BatchableContext BC) {
         return Database.getQueryLocator([
@@ -18,7 +18,11 @@ global class CancelTripsBatch implements Database.Batchable<sObject> {
         
         update trips;
     }
-    
+    //to schedule
+    global void execute(SchedulableContext sc) {
+        CancelTripsBatch batch = new CancelTripsBatch();
+        Database.executeBatch(batch);
+    }
     global void finish(Database.BatchableContext BC) {
     }
 }

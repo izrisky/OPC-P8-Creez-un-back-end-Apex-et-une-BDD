@@ -123,10 +123,10 @@ private class TripServiceTest {
         System.assertEquals(0, deletedTrip.size(), 'Le voyage doit être supprimé');
     }
 
-        @isTest
-        static void testCreateTripForClosedWonOpportunities() {
-            Opportunity  opp=[SELECT Id, Name, Amount FROM Opportunity LIMIT 1];
-            opp.StageName = 'Closed Won';
+    @isTest
+    static void testCreateTripForClosedWonOpportunities() {
+        Opportunity  opp=[SELECT Id, Name, Amount FROM Opportunity LIMIT 1];
+        opp.StageName = 'Closed Won';
     
             Test.startTest();
             update opp;
@@ -136,7 +136,7 @@ private class TripServiceTest {
             System.assertEquals(1, trips.size());
             System.assertEquals('A venir', trips[0].Status__c);
             System.assertEquals('Paris', trips[0].Destination__c);
-        }
+    }
     
     @isTest
     static void testTripDateValidation() {

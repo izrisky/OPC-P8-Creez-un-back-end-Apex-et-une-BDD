@@ -70,4 +70,18 @@ public class UpdateTripStatusBatchTest {
         System.assertEquals('En cours', updatedTrip2.Status__c);
         System.assertEquals('Terminé', updatedTrip3.Status__c);
     }
+   
+    // Test de la planification
+    @isTest
+    static void testScheduleExecution() {
+        String jobName = 'ScheduledStatusUpdateTest';
+        
+        Test.startTest();
+        System.schedule(jobName, '0 0 0 * * ?', new UpdateTripStatusBatch());
+        Test.stopTest();
+        
+        // Vérification de la création du job
+        List<CronTrigger> jobs = [SELECT Id FROM CronTrigger WHERE CronJobDetail.Name = :jobName];
+        System.assertEquals(1, jobs.size(), 'Le job devrait être planifié');
+    }
 }
