@@ -1,11 +1,15 @@
 public with sharing class TripService {
-    
     public static Trip__c create(Trip__c trip) {
-        if (!Schema.sObjectType.Trip__c.isCreateable()) {   
+        if (!Schema.sObjectType.Trip__c.isCreateable()) {
             System.debug('Access denied: User does not have permission to create Trip__c.');
             return null;
-        }
-        insert trip;
+        }        
+        try {
+            insert trip;
+        } catch (DmlException e) {
+            System.debug('Error inserting Trip__c: ' + e.getMessage());
+            return null;
+        }        
         return trip;
     }
 
@@ -13,25 +17,38 @@ public with sharing class TripService {
         if (!Schema.sObjectType.Trip__c.isAccessible()) {   
             System.debug('Access denied: User does not have permission to read Trip__c.');
             return null;
-        }
-        return TripSelector.getById(tripId);
+        }        
+        try {
+            return TripSelector.getById(tripId);        
+        } catch (DmlException e) {
+            System.debug('Error reading Trip__c: ' + e.getMessage());
+            return null;
+        }   
     }
 
     public static void updateTrip(Trip__c trip) {
         if (!Schema.sObjectType.Trip__c.isUpdateable()) {   
             System.debug('Access denied: User does not have permission to update Trip__c.');
         }
-        update trip;
+        try {
+            update trip;
+        } catch (DmlException e) {
+            System.debug('Error reading Trip__c: ' + e.getMessage());
+        }   
     }
 
     public static void deleteTrip(Id tripId) {
         if (!Schema.sObjectType.Trip__c.isDeletable()) {   
             System.debug('Access denied: User does not have permission to delete Trip__c.');
         }
-        Trip__c trip = TripSelector.getById(tripId);
+        try {
+            Trip__c trip = TripSelector.getById(tripId);
         if (trip != null) {
             delete trip;
         }
+        } catch (DmlException e) {
+            System.debug('Error reading Trip__c: ' + e.getMessage());
+        }   
     }
 
     public static void createTripForClosedWonOpportunities(List<Opportunity> newOpportunities, Map<Id, Opportunity> oldOpportunityMap) {

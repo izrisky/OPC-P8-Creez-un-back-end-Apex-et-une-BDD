@@ -1,14 +1,15 @@
-global class UpdateTripStatusBatch implements Database.Batchable<sObject>,Schedulable {
-    
+global class UpdateTripStatusBatch implements Database.Batchable<sObject>,Schedulable {    
     global Database.QueryLocator start(Database.BatchableContext BC) {
-        ///TODO optimiser la requette
+        Date today = Date.today();
         return Database.getQueryLocator([
             SELECT Id, Start_Date__c, End_Date__c, Status__c 
             FROM Trip__c 
-            WHERE Status__c IN ('A venir', 'En cours', 'Terminé')
+            WHERE 
+                (Status__c = 'A venir' AND Start_Date__c <= :today) OR
+                (Status__c = 'En cours' AND End_Date__c < :today) OR
+                (Status__c = 'Terminé' AND End_Date__c >= :today)
         ]);
-    }
-    
+    }    
     global void execute(Database.BatchableContext BC, List<Trip__c> trips) {
         Date today = Date.today();
         for (Trip__c trip : trips) {
@@ -26,8 +27,8 @@ global class UpdateTripStatusBatch implements Database.Batchable<sObject>,Schedu
     
     global void finish(Database.BatchableContext BC) {
     }
-        global void execute(SchedulableContext sc) {
-            UpdateTripStatusBatch batch = new UpdateTripStatusBatch();
-            Database.executeBatch(batch);
-        }
+    global void execute(SchedulableContext sc) {
+        UpdateTripStatusBatch batch = new UpdateTripStatusBatch();
+        Database.executeBatch(batch);
+    }
 }
